@@ -10,6 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 from .routes import api
+import data
 
 app = Flask(__name__)
 app.register_blueprint(api)

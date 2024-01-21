@@ -2,6 +2,10 @@ from flask import Blueprint, jsonify, request
 import requests
 import time
 
+from unidecode import unidecode
+
+
+
 api = Blueprint('api', __name__)
 
 
@@ -76,9 +80,15 @@ def get_gios_historic_data():
         response = requests.get(api_url)
         response.raise_for_status()  # This will raise an exception for HTTP errors
         data = response.json()
-
-        # Return the data as JSON
-        return jsonify(data)
+        lista_statystyk = data.get("Lista statystyk", [])
+        for item in lista_statystyk:
+            for key, value in item.items():
+                if isinstance(value, str):
+                    item[key] = unidecode(value)  # Replace non-ASCII characters
+        
+        data.historicDataProcessingPandas(jsonify(lista_statystyk))
+        # Return the modified list as JSON
+        return jsonify(lista_statystyk)
 
     except requests.RequestException as e:
         # Return error message if the request fails
