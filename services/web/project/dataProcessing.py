@@ -2,28 +2,18 @@ import pandas as pd
 import json
 
 def json_array_to_dataframe(json_array):
-
     try:
-        # Convert JSON array (string) to a Python list
-        data_list = json.loads(json_array)
+        # Parse the JSON string into Python objects (list of dictionaries)
+        df = pd.DataFrame(json_array)
 
-        # Normalize the JSON data and convert it to a DataFrame
-        dataFrameJSON = pd.json_normalize(data_list)
-
-        #Calculate the mean of the values in the column
-        mean = dataFrameJSON['value'].mean()
-        
-        #add new column with mean value
-        dataFrameJSON['mean'] = mean
+        # convert into json
+        df = df.to_json(orient='records')
+        return df
 
 
-
-
-        # Normalize the JSON data and convert it to a DataFrame
-        return dataFrameJSON.to_json(orient="records")
-    
-
-
+    except json.JSONDecodeError:
+        # Handling invalid JSON format
+        return "Invalid JSON format"
     except Exception as e:
-        print("Error converting JSON array to DataFrame:", e)
-        return None
+        # Handling other exceptions
+        return f"An error occurred: {e}"

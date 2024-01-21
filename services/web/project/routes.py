@@ -80,15 +80,9 @@ def get_gios_historic_data():
         response.raise_for_status()  # This will raise an exception for HTTP errors
         data = response.json()
         lista_statystyk = data.get("Lista statystyk", [])
-        for item in lista_statystyk:
-            for key, value in item.items():
-                if isinstance(value, str):
-                    item[key] = unidecode(value)  # Replace non-ASCII characters
-        
-        
         # Return the modified list as JSON
-        
-        return jsonify(json_array_to_dataframe(lista_statystyk))
+        lista_statystyk = json_array_to_dataframe(lista_statystyk)
+        return jsonify(lista_statystyk)
 
     except requests.RequestException as e:
         # Return error message if the request fails
