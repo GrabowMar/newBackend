@@ -1,8 +1,8 @@
 from flask import Blueprint, jsonify, request
 import requests
 import time
-
 from unidecode import unidecode
+from project.dataProcessing import json_array_to_dataframe
 
 
 
@@ -12,7 +12,6 @@ api = Blueprint('api', __name__)
 @api.route("/")
 def hello_world():
     return jsonify(hello="world")
-
 
 @api.route("/static/<path:filename>")
 def staticfiles(filename):
@@ -86,10 +85,12 @@ def get_gios_historic_data():
                 if isinstance(value, str):
                     item[key] = unidecode(value)  # Replace non-ASCII characters
         
-        data.historicDataProcessingPandas(jsonify(lista_statystyk))
+        
         # Return the modified list as JSON
-        return jsonify(lista_statystyk)
+        
+        return jsonify(json_array_to_dataframe(lista_statystyk))
 
     except requests.RequestException as e:
         # Return error message if the request fails
         return jsonify({'error': str(e)}), 500
+
